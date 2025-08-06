@@ -179,4 +179,105 @@
   .header {
     font-size: 12px;
   }
+  .login-modal-overlay {
+    background: rgba(22,30,42, 0.77) !important;
+    position: fixed !important;
+    inset: 0;
+    width: 100vw !important;
+    height: 100vh !important;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .login-modal {
+    background: #232b3a;
+    border-radius: 24px;
+    padding: 38px 38px 22px 38px;
+    box-shadow: 0 4px 50px #06e6a05c;
+    width: 370px;
+    max-width: 90vw;
+    outline: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    animation: modal-pop 0.33s cubic-bezier(.5,.99,.5,1.03);
+  }
+  @keyframes modal-pop {
+    0% { transform: scale(.88) translateY(80px); opacity: 0; }
+    100% { transform: scale(1) translateY(0); opacity: 1; }
+  }
+  .login-form label {
+    color: #fff;
+    font-size: 1.03rem;
+    margin-bottom: 7px;
+    display: block;
+    width: 100%;
+  }
+  .login-form input {
+    background: #1b2331;
+    color: #fff;
+    border: none;
+    border-radius: 7px;
+    margin: 8px 0 18px 0;
+    padding: 11px 10px;
+    width: 100%;
+    font-size: 1rem;
+    transition: box-shadow .14s;
+    box-shadow: 0 1px 8px #06e6a024;
+  }
+  .login-btn {
+    background: linear-gradient(90deg, #06e6a0 0%, #1fffd4 100%);
+    color: #181d2a;
+    border: none;
+    border-radius: 9px;
+    padding: 13px 0;
+    width: 100%;
+    font-weight: 700;
+    margin-top: 6px;
+    font-size: 1.1rem;
+    box-shadow: 0 2px 14px #06e6a032;
+    cursor: pointer;
+    transition: background 0.13s, transform 0.12s;
+  }
+  .login-btn:hover {
+    background: linear-gradient(90deg, #1fffd4 0%, #06e6a0 100%);
+    transform: scale(1.03);
+  }
+  .close-modal-btn {
+    margin-top: 12px;
+    background: none;
+    color: #19ffe6;
+    border: none;
+    font-size: 1.04rem;
+    cursor: pointer;
+    opacity: .76;
+  }
+  .close-modal-btn:hover {
+    opacity: 1;
+    text-decoration: underline;
+  }
+  .menu > li {
+    display: inline-block;
+    vertical-align: middle;
+  }
+  
+  .menu > li > a.navbar-login-btn {
+    background: linear-gradient(90deg, #06e6a0 0%, #1fffd4 100%);
+    color: #181d2a !important;
+    font-weight: 700;
+    border-radius: 13px;
+    margin-left: 15px;
+    box-shadow: 0 2px 14px #06e6a032;
+    font-size: 1.07rem;
+    line-height: 1.2;
+    padding: 10px 24px;
+    transition: background 0.13s, transform 0.12s;
+    display: inline-block;
+    vertical-align: middle;
+  }
+  .menu > li > a.navbar-login-btn:hover {
+    background: linear-gradient(90deg, #1fffd4 0%, #06e6a0 100%);
+  }
+  
 }

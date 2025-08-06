@@ -1,69 +1,54 @@
-import React, {useContext} from "react";
+import React, { useContext } from "react";
 import "./Contact.scss";
-import SocialMedia from "../../components/socialMedia/SocialMedia";
-import {illustration, contactInfo} from "../../portfolio";
-import {Fade} from "react-reveal";
-import email from "../../assets/lottie/email";
-import DisplayLottie from "../../components/displayLottie/DisplayLottie";
+import { Fade } from "react-reveal";
 import StyleContext from "../../contexts/StyleContext";
 
 export default function Contact() {
-  const {isDark} = useContext(StyleContext);
+  const { isDark } = useContext(StyleContext);
+
   return (
-    <Fade bottom duration={1000} distance="20px">
-      <div className="main contact-margin-top" id="contact">
-        <div className="contact-div-main">
-          <div className="contact-header">
-            <h1 className="heading contact-title">{contactInfo.title}</h1>
-            <p
-              className={
-                isDark
-                  ? "dark-mode contact-subtitle"
-                  : "subTitle contact-subtitle"
-              }
-            >
-              {contactInfo.subtitle}
-            </p>
-            <div
-              className={
-                isDark ? "dark-mode contact-text-div" : "contact-text-div"
-              }
-            >
-              {contactInfo.number && (
-                <>
-                  <a
-                    className="contact-detail"
-                    href={"tel:" + contactInfo.number}
-                  >
-                    {contactInfo.number}
-                  </a>
-                  <br />
-                  <br />
-                </>
-              )}
-              <a
-                className="contact-detail-email"
-                href={"mailto:" + contactInfo.email_address}
-              >
-                {contactInfo.email_address}
-              </a>
-              <br />
-              <br />
-              <SocialMedia />
+    <Fade bottom duration={900} distance="20px">
+      <section className="contact-section" id="contact">
+        <form
+          action="https://formspree.io/f/xyzpbgpg"
+          method="POST"
+          className={`contact-form-new${isDark ? " dark" : ""}`}
+          autoComplete="off"
+        >
+          <h2 className="contact-title">Kontakt aufnehmen</h2>
+          <div className="contact-fields">
+            <div className="contact-field">
+              <input type="text" name="name" id="name" required placeholder=" " />
+              <label htmlFor="name">Name *</label>
+            </div>
+            <div className="contact-field">
+              <input type="email" name="email" id="email" required placeholder=" " />
+              <label htmlFor="email">E-Mail *</label>
+            </div>
+            <div className="contact-field">
+              <input type="text" name="phone" id="phone" placeholder=" " />
+              <label htmlFor="phone">Telefon</label>
+            </div>
+            <div className="contact-field">
+              <input type="text" name="company" id="company" placeholder=" " />
+              <label htmlFor="company">Unternehmen</label>
+            </div>
+            <div className="contact-field">
+              <input type="text" name="linkedin" id="linkedin" placeholder=" " />
+              <label htmlFor="linkedin">LinkedIn (optional)</label>
+            </div>
+            <div className="contact-field">
+              <input type="text" name="subject" id="subject" required placeholder=" " />
+              <label htmlFor="subject">Betreff *</label>
+            </div>
+            <div className="contact-field full">
+              <textarea name="message" id="message" required rows={6} placeholder=" "></textarea>
+              <label htmlFor="message">Nachricht *</label>
             </div>
           </div>
-          <div className="contact-image-div">
-            {illustration.animated ? (
-              <DisplayLottie animationData={email} />
-            ) : (
-              <img
-                alt="Man working"
-                src={require("../../assets/images/contactMailDark.svg")}
-              ></img>
-            )}
-          </div>
-        </div>
-      </div>
+          <button type="submit" className="contact-submit-btn">Absenden</button>
+        </form>
+      </section>
     </Fade>
   );
 }
