@@ -153,4 +153,50 @@
   .experience-text-desc {
     font-size: 16px;
   }
+/* === Flip-Wrapper (Layout bleibt wie Front) === */
+/* Flip-Wrapper fix */
+.experience-flip {
+  position: relative;
+  width: 100%;
+  /* Höhe wird per JS gesetzt = exakt so hoch wie die Front */
+}
+
+.experience-flip-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  transition: transform .6s ease;
+}
+
+.experience-flip:hover .experience-flip-inner {
+  transform: rotateY(180deg);
+}
+
+/* Beide Seiten absolut übereinander -> keine Extra-Fläche darunter */
+.experience-face {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+}
+
+.experience-front { transform: rotateY(0); }
+.experience-back  { transform: rotateY(180deg); }
+
+/* Rückseite dunkler + Text sichtbar */
+.experience-back .experience-card {
+  background: #232b3a;
+  color: #fff;
+}
+.experience-back .experience-card-dark {
+  background: #1b2433;
+  color: #fff;
+}
+.experience-back .subTitle,
+.experience-back .experience-text-desc,
+.experience-back .experience-text-role,
+.experience-back .experience-text-date { color:#fff; }
+
+
+
 }

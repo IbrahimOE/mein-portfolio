@@ -24,7 +24,8 @@
     "react-tsparticles": "^2.12.2",
     "react-twitter-embed": "3.0.3",
     "react-type-animation": "^3.2.0",
-    "sass": "^1.32.8"
+    "sass": "^1.32.8",
+    "three": "^0.133.1"
   },
   "scripts": {
     "predeploy": "npm run build",
@@ -58,7 +59,7 @@
   },
   "devDependencies": {
     "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
-    "dotenv": "^8.2.0",
+    "dotenv": "^8.6.0",
     "prettier": "^2.3.1"
   }
 }

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Modal from "react-modal";
+import NeuroTechnik from "./NeuroTechnik/NeuroTechnik";
 import Header from "../components/header/Header";
 import ContactAnimation from "./contactAnimation/ContactAnimation";
 import Greeting from "./greeting/Greeting";
@@ -53,10 +54,7 @@ const Main = () => {
     }
   }, []);
 
-  const changeTheme = () => {
-    setIsDark(!isDark);
-  };
-
+  const changeTheme = () => setIsDark(!isDark);
   const acceptCookies = () => setCookieConsent(true);
   const declineCookies = () => setCookieConsent(false);
 
@@ -80,48 +78,68 @@ const Main = () => {
               <motion.div variants={childVariants}>
                 <Greeting />
               </motion.div>
+
               <motion.div variants={childVariants}>
                 <ContactAnimation />
               </motion.div>
+
               <motion.div variants={childVariants}>
                 <Education />
               </motion.div>
+
               <motion.div variants={childVariants}>
                 <Skills />
               </motion.div>
+
               <motion.div variants={childVariants}>
                 <StackProgress />
               </motion.div>
+
               <motion.div variants={childVariants}>
                 <WorkExperience />
               </motion.div>
+
+              {/* >>> NeuroTechnik direkt unter Experience <<< */}
+              <motion.div variants={childVariants}>
+                <NeuroTechnik />
+              </motion.div>
+
               <motion.div variants={childVariants}>
                 <Projects />
               </motion.div>
+
               <motion.div variants={childVariants}>
                 <StartupProject />
               </motion.div>
+
               <motion.div variants={childVariants}>
                 <Achievement />
               </motion.div>
+
               <motion.div variants={childVariants}>
                 <Blogs />
               </motion.div>
+
               <motion.div variants={childVariants}>
                 <Talks />
               </motion.div>
+
               <motion.div variants={childVariants}>
                 <Twitter />
               </motion.div>
+
               <motion.div variants={childVariants}>
                 <Podcast />
               </motion.div>
+
               <motion.div variants={childVariants}>
                 <Profile />
               </motion.div>
+
               <motion.div variants={childVariants}>
                 <Footer />
               </motion.div>
+
               <motion.div variants={childVariants}>
                 <ScrollToTopButton />
               </motion.div>

@@ -59,60 +59,59 @@ export const contactAnimationInfo = {
 
 
 
-// Educationinfo
 const educationInfo = {
   display: true,
   schools: [
     {
-      schoolName: "Fundierter IT-Spezialist",
-      logo: require("./assets/images/1.png"),
-      subHeader: "Cybersecurity & Forensik | Seit Beginn der Ausbildung",
-      duration: "Analysiere Systeme auf Schwachstellen und entwickle Schutzstrategien",
-      desc: "Kenntnisse in Sicherheitsanalysen, Penetration Testing, Problemlösung",
+      schoolName: "Lufthansa Technik",
+      logo: require("./assets/images/LHT.jpg"),
+      subHeader: "Aircraft Technician – Instandhaltung & Systemdiagnose",
+      duration: "Flugzeugwartung und Systemprüfung",
+      desc: "Verantwortlich für die Wartung, Reparatur und Diagnose moderner Flugzeugsysteme. Arbeit an sicherheitsrelevanten Komponenten, technische Analysen und Dokumentation.",
       descBullets: [
-        
+        "Mechanische & elektronische Fehlersuche",
+        "Prüfung sicherheitskritischer Bauteile",
+        "Teamarbeit in internationalen Crews"
       ]
     },
     {
-      schoolName: "Technischer Problemlöser",
-      logo: require("./assets/images/2.png"),
-      subHeader: "Kenntnisse in Sicherheitsanalysen, Penetration Testing, Problemlösung",
-      duration: "Kreative Lösungen für technische Herausforderungen",
-      desc: "Erfahrung mit JavaScript, Python, React, Webapplikationen",
+      schoolName: "AirPlus International",
+      logo: require("./assets/images/AirPlus.png"),
+      subHeader: "IT-Spezialist – Business Solutions & Payment",
+      duration: "Digitale Zahlungssysteme & Datenmanagement",
+      desc: "Mitgestaltung und Sicherung von Unternehmensprozessen im Bereich Zahlungsverkehr. Optimierung und Verwaltung sensibler IT-Strukturen sowie Analyse von Geschäftsdaten.",
       descBullets: [
-    
+        "IT-Security & Prozessautomatisierung",
+        "Datenanalyse und Reporting",
+        "Sicherstellung von Compliance"
       ]
     },
     {
-      schoolName: "Meister der Manipulation und Täuschungstechnik",
-      logo: require("./assets/images/stanfordLogo.png"),
-      subHeader: "Strategisches Denken & Menschenkenntnis",
-      duration: "",
-      desc: "Mit klarem Verstand und Einfühlungsvermögen lenke ich Situationen und erkenne verborgene Motive, um optimale Ergebnisse zu erzielen.",
+      schoolName: "Uniklinikum Frankfurt",
+      logo: require("./assets/images/unilinik.png"),
+      subHeader: "Neurotechnik – Bildgebung & Diagnostik",
+      duration: "Medizintechnik und IT in der Neurologie",
+      desc: "Betreuung und Optimierung bildgebender Systeme wie MRT/CT im neurologischen Umfeld. Sicherstellung der IT-Infrastruktur für präzise Diagnostik und Forschung.",
       descBullets: [
-        
+        "Wartung und Support medizinischer Bildgebungssysteme",
+        "Datenmanagement & Datenschutz",
+        "Unterstützung neurologischer Forschungsprojekte"
       ]
     },
     {
-      schoolName: "Analytischer Visionär",
-      logo: require("./assets/images/4.png"),
-      subHeader: "Fokussiert, zielstrebig und reflektiert",
-      duration: "Kontinuierlich",
-      desc: "Ich arbeite strukturiert und überlegt, um komplexe Probleme zu lösen und nachhaltige Erfolge zu erzielen.",
+      schoolName: "Landeskriminalamt (LKA) Hessen",
+      logo: require("./assets/images/LKA.jpg"),
+      subHeader: "Cybersecurity & IT-Forensik",
+      duration: "Digitale Ermittlungen & Spurensicherung",
+      desc: "Analyse und Sicherung digitaler Spuren zur Bekämpfung von Cybercrime. Entwicklung von Sicherheitsstrategien und Zusammenarbeit mit Ermittlungsbehörden.",
       descBullets: [
-        "Starke Fähigkeit zur kritischen Analyse und Problemlösung",
-        "Disziplinierter und selbstbewusster Arbeitsstil",
-        "Offenheit für neue Perspektiven und kontinuierliches Lernen",
-        "Leidenschaft für nachhaltige und innovative Lösungen"
+        "Digitale Forensik & Incident Response",
+        "Schwachstellenanalyse und Prävention",
+        "Enge Zusammenarbeit mit Ermittlern"
       ]
     }
   ]
 };
-
-
-
-
-
 
 
 // Skills Section
@@ -226,13 +225,20 @@ const workExperiences = {
       date: "August 2022 – August 2023",
       desc: "Technischer Support für Airbus A320 Familie"
     },
-    
     {
-      role: "Computer Science Expert",
+      role: "Computer Science",
       company: "AirPlus",
       companylogo: require("./assets/images/AirPlus.png"),
       date: "August 2023 - Februar 2026",
-      desc: "Softwareentwicklung, IT-Sicherheit und Systemadministration",
+      desc: "Softwareentwicklung, IT-Sicherheit und Systemadministration"
+    },
+    
+    {
+      role: "Neurotechnik",
+      company: "Uniklinik Frankfurt",
+      companylogo: require("./assets/images/unilinik.png"),
+      date: "Februar 2026 - Agusut 2026",
+      desc: "Neurotechnik Bildumgebung & Diagnostik",
       descBullets: [
    
       ]
@@ -241,7 +247,7 @@ const workExperiences = {
       role: "IT-Forensik & Cybercrime",
       company: "Landeskriminalamt Hessen",
       companylogo: require("./assets/images/LKA.jpg"),
-      date: "Februar 2026",
+      date: "August 2026",
       desc: "Ermittlungen im Bereich Cybercrime, Forensik und digitale Beweissicherung."
     }
   ]
