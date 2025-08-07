@@ -180,7 +180,7 @@
     font-size: 12px;
   }
   .login-modal-overlay {
-    background: rgba(22,30,42, 0.77) !important;
+    background: rgba(255, 255, 255, 0.77) !important;
     position: fixed !important;
     inset: 0;
     width: 100vw !important;
@@ -191,7 +191,7 @@
     justify-content: center;
   }
   .login-modal {
-    background: #232b3a;
+    background: #ffffff !important;
     border-radius: 24px;
     padding: 38px 38px 22px 38px;
     box-shadow: 0 4px 50px #06e6a05c;
@@ -278,6 +278,11 @@
   }
   .menu > li > a.navbar-login-btn:hover {
     background: linear-gradient(90deg, #1fffd4 0%, #06e6a0 100%);
+  }
+  .login-modal div {
+    white-space: normal !important;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
   }
   
 }

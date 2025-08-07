@@ -20,12 +20,12 @@ const illustration = {
 };
 
 const greeting = {
-  username: "IBRAHIM ÖZTÜRK",
+  username: "Öztürk",
   title: "Hi, ich bin Ibrahim",
-  subTitle: emoji(
-    "Analysiere digitale Schwachstellen" + 
-    "Entdecke Spuren & Manipulationstechniken\n" +
-    "Meister der Täuschung und Informationsbeschaffung"
+  subTitle: (
+    <>
+      Software Entwickler<br />
+    </>
   ),
   resumeLink: "",
   displayGreeting: true
@@ -45,6 +45,84 @@ const socialMediaLinks = {
   // To customize icons and social links, tweak src/components/SocialMedia
   display: true // Set true to display this section, defaults to false
 };
+//Animation
+
+export const contactAnimationInfo = {
+  display: true,
+  messages: [
+    "Let's build something amazing together!",
+    "Reach out for collaboration!",
+    "Your next project starts here."
+  ],
+};
+
+
+
+
+// Educationinfo
+const educationInfo = {
+  display: true,
+  schools: [
+    {
+      schoolName: "Fundierter IT-Spezialist",
+      logo: require("./assets/images/1.png"),
+      subHeader: "Spezialist für Cybersecurity und digitale Forensik",
+      duration: "Seit Beginn meiner Ausbildung",
+      desc: "Ich analysiere digitale Systeme auf Schwachstellen und entwickle Strategien, um diese effizient zu schützen.",
+      descBullets: [
+        "Fundierte Kenntnisse in der IT und Sicherheitsanalysen",
+        "Entwicklung eines Instagram-Analyse-Tools zur Bewertung digitaler Profile",
+        "Fundierte Kenntnisse in Penetration Testing und Sicherheitsstandards",
+        "Fähigkeit, komplexe IT-Probleme strukturiert zu lösen"
+      ]
+    },
+    {
+      schoolName: "Technischer Problemlöser",
+      logo: require("./assets/images/2.png"),
+      subHeader: "Verlässlicher Entwickler und Teamplayer",
+      duration: "Mehrjährige praktische Erfahrung",
+      desc: "Ich finde kreative und nachhaltige Lösungen für technische Herausforderungen und arbeite eng mit Kollegen zusammen, um beste Ergebnisse zu erzielen.",
+      descBullets: [
+        "Programmierkenntnisse in JavaScript, Python, React und mehr",
+        "Erfahrung in der Entwicklung sicherer Webapplikationen",
+        "Starke Kommunikationsfähigkeit und Teamorientierung",
+        "Kontinuierliche Weiterbildung in aktuellen Technologien"
+      ]
+    },
+    {
+      schoolName: "Meister der Manipulation und Täuschungstechnik",
+      logo: require("./assets/images/stanfordLogo.png"),
+      subHeader: "Strategischer Denker mit tiefem Verständnis für menschliches Verhalten",
+      duration: "Seit jeher",
+      desc: "Mit klarem Verstand und Einfühlungsvermögen lenke ich Situationen und erkenne verborgene Motive, um optimale Ergebnisse zu erzielen.",
+      descBullets: [
+        "Ausgeprägte Menschenkenntnis und emotionale Intelligenz",
+        "Fähigkeit, komplexe Zusammenhänge und Absichten zu durchschauen",
+        "Gezieltes strategisches Denken in herausfordernden Situationen",
+        "Hohes Maß an Anpassungsfähigkeit und Flexibilität"
+      ]
+    },
+    {
+      schoolName: "Analytischer Visionär",
+      logo: require("./assets/images/4.png"),
+      subHeader: "Fokussiert, zielstrebig und reflektiert",
+      duration: "Kontinuierlich",
+      desc: "Ich arbeite strukturiert und überlegt, um komplexe Probleme zu lösen und nachhaltige Erfolge zu erzielen.",
+      descBullets: [
+        "Starke Fähigkeit zur kritischen Analyse und Problemlösung",
+        "Disziplinierter und selbstbewusster Arbeitsstil",
+        "Offenheit für neue Perspektiven und kontinuierliches Lernen",
+        "Leidenschaft für nachhaltige und innovative Lösungen"
+      ]
+    }
+  ]
+};
+
+
+
+
+
+
 
 // Skills Section
 
@@ -123,30 +201,6 @@ https://fontawesome.com/icons?d=gallery */
 
 // Education Section
 
-const educationInfo = {
-  display: false, // Set false to hide this section, defaults to true
-  schools: [
-    {
-      schoolName: "Harvard University",
-      logo: require("./assets/images/harvardLogo.png"),
-      subHeader: "Master of Science in Computer Science",
-      duration: "September 2017 - April 2019",
-      desc: "Participated in the research of XXX and published 3 papers.",
-      descBullets: [
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit",
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit"
-      ]
-    },
-    {
-      schoolName: "Stanford University",
-      logo: require("./assets/images/stanfordLogo.png"),
-      subHeader: "Bachelor of Science in Computer Science",
-      duration: "September 2013 - April 2017",
-      desc: "Ranked top 10% in the program. Took courses about Software Engineering, Web Security, Operating Systems, ...",
-      descBullets: ["Lorem ipsum dolor sit amet, consectetur adipiscing elit"]
-    }
-  ]
-};
 
 // Your top 3 proficient stacks/tech experience
 

@@ -1,5 +1,6 @@
 import React, {useEffect, useState} from "react";
 import Header from "../components/header/Header";
+import ContactAnimation from "./contactAnimation/ContactAnimation";
 import Greeting from "./greeting/Greeting";
 import Skills from "./skills/Skills";
 import StackProgress from "./skillProgress/skillProgress";
@@ -19,6 +20,7 @@ import SplashScreen from "./splashScreen/SplashScreen";
 import {splashScreen} from "../portfolio";
 import {StyleProvider} from "../contexts/StyleContext";
 import {useLocalStorage} from "../hooks/useLocalStorage";
+
 import "./Main.scss";
 
 const Main = () => {
@@ -52,9 +54,11 @@ const Main = () => {
           <>
             <Header />
             <Greeting />
-            <Skills />
-            <StackProgress />
+            <ContactAnimation/>
             <Education />
+            <Skills />
+            
+            <StackProgress />
             <WorkExperience />
             <Projects />
             <StartupProject />
