@@ -66,40 +66,31 @@ const educationInfo = {
     {
       schoolName: "Fundierter IT-Spezialist",
       logo: require("./assets/images/1.png"),
-      subHeader: "Spezialist für Cybersecurity und digitale Forensik",
-      duration: "Seit Beginn meiner Ausbildung",
-      desc: "Ich analysiere digitale Systeme auf Schwachstellen und entwickle Strategien, um diese effizient zu schützen.",
+      subHeader: "Cybersecurity & Forensik | Seit Beginn der Ausbildung",
+      duration: "Analysiere Systeme auf Schwachstellen und entwickle Schutzstrategien",
+      desc: "Kenntnisse in Sicherheitsanalysen, Penetration Testing, Problemlösung",
       descBullets: [
-        "Fundierte Kenntnisse in der IT und Sicherheitsanalysen",
-        "Entwicklung eines Instagram-Analyse-Tools zur Bewertung digitaler Profile",
-        "Fundierte Kenntnisse in Penetration Testing und Sicherheitsstandards",
-        "Fähigkeit, komplexe IT-Probleme strukturiert zu lösen"
+        
       ]
     },
     {
       schoolName: "Technischer Problemlöser",
       logo: require("./assets/images/2.png"),
-      subHeader: "Verlässlicher Entwickler und Teamplayer",
-      duration: "Mehrjährige praktische Erfahrung",
-      desc: "Ich finde kreative und nachhaltige Lösungen für technische Herausforderungen und arbeite eng mit Kollegen zusammen, um beste Ergebnisse zu erzielen.",
+      subHeader: "Kenntnisse in Sicherheitsanalysen, Penetration Testing, Problemlösung",
+      duration: "Kreative Lösungen für technische Herausforderungen",
+      desc: "Erfahrung mit JavaScript, Python, React, Webapplikationen",
       descBullets: [
-        "Programmierkenntnisse in JavaScript, Python, React und mehr",
-        "Erfahrung in der Entwicklung sicherer Webapplikationen",
-        "Starke Kommunikationsfähigkeit und Teamorientierung",
-        "Kontinuierliche Weiterbildung in aktuellen Technologien"
+    
       ]
     },
     {
       schoolName: "Meister der Manipulation und Täuschungstechnik",
       logo: require("./assets/images/stanfordLogo.png"),
-      subHeader: "Strategischer Denker mit tiefem Verständnis für menschliches Verhalten",
-      duration: "Seit jeher",
+      subHeader: "Strategisches Denken & Menschenkenntnis",
+      duration: "",
       desc: "Mit klarem Verstand und Einfühlungsvermögen lenke ich Situationen und erkenne verborgene Motive, um optimale Ergebnisse zu erzielen.",
       descBullets: [
-        "Ausgeprägte Menschenkenntnis und emotionale Intelligenz",
-        "Fähigkeit, komplexe Zusammenhänge und Absichten zu durchschauen",
-        "Gezieltes strategisches Denken in herausfordernden Situationen",
-        "Hohes Maß an Anpassungsfähigkeit und Flexibilität"
+        
       ]
     },
     {

@@ -3,6 +3,8 @@ import "./SplashScreen.css";
 import DisplayLottie from "../../components/displayLottie/DisplayLottie";
 import { greeting, splashScreen } from "../../portfolio";
 import StyleContext from "../../contexts/StyleContext";
+import { motion } from "framer-motion";
+
 
 export default function SplashScreen() {
   const { isDark } = useContext(StyleContext);
@@ -135,4 +137,16 @@ export default function SplashScreen() {
       `}</style>
     </div>
   );
+<div className="splash-animation-container">
+  <motion.div
+    initial={{ scale: 1 }}
+    animate={{ scale: [1, 1.06, 1] }}
+    transition={{ repeat: Infinity, duration: 1.6, ease: "easeInOut" }}
+  >
+    <DisplayLottie animationData={splashScreen.animation} />
+  </motion.div>
+</div>
+
+
+
 }
