@@ -20,7 +20,7 @@ const illustration = {
 };
 
 const greeting = {
-  username: "Öztürk",
+  username: "Ibrahim",
   title: "Hi, ich bin Ibrahim",
   subTitle: (
     <>
@@ -230,7 +230,7 @@ const workExperiences = {
   experience: [
     {
       role: "Aircraft Technican",
-      company: "LHT AG",
+      company: "Lufthansa Technik",
       companylogo: require("./assets/images/LHT.jpg"),
       date: "August 2022 – August 2023",
       desc: "Technischer Support für Airbus A320 Familie"

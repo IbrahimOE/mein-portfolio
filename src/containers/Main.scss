@@ -5,3 +5,23 @@
   color: white;
   transition: "0.1s";
 }
+@keyframes slideUp {
+  0% {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+html, body {
+  overflow-x: hidden;
+  margin: 0;
+  padding: 0;
+  width: 100vw;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
