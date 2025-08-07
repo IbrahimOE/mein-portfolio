@@ -8,7 +8,7 @@ export default function SplashScreen() {
   const { isDark } = useContext(StyleContext);
 
   const [displayText, setDisplayText] = useState("");
-  const fullText = "Hallo";
+  const fullText = "Wilkommen";
   const speed = 300; // Tipper-Effekt 600ms pro Buchstabe
 
   useEffect(() => {
