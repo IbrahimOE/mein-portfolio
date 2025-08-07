@@ -20,7 +20,7 @@ const illustration = {
 };
 
 const greeting = {
-  username: "IBRAHIM",
+  username: "Ibrahim",
   title: "Hi, ich bin Ibrahim",
   subTitle: (
     <>
