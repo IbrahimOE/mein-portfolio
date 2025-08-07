@@ -22,20 +22,21 @@ import { splashScreen } from "../portfolio";
 import { StyleProvider } from "../contexts/StyleContext";
 import { useLocalStorage } from "../hooks/useLocalStorage";
 
+import "./Main.scss";
+
+// Setze das App-Element für Modal (wichtig für Accessibility)
 Modal.setAppElement("#root");
 
 const Main = () => {
   const darkPref = window.matchMedia("(prefers-color-scheme: dark)");
   const [isDark, setIsDark] = useLocalStorage("isDark", darkPref.matches);
   const [isShowingSplashAnimation, setIsShowingSplashAnimation] = useState(true);
-
-  // Cookie Consent: null = keine Entscheidung, true = akzeptiert, false = abgelehnt
   const [cookieConsent, setCookieConsent] = useLocalStorage("cookieConsent", null);
 
   useEffect(() => {
     if (splashScreen.enabled) {
-      const splashTimer = setTimeout(() => setIsShowingSplashAnimation(false), 3000);
-      return () => clearTimeout(splashTimer);
+      const timer = setTimeout(() => setIsShowingSplashAnimation(false), 3000);
+      return () => clearTimeout(timer);
     }
   }, []);
 
@@ -43,11 +44,11 @@ const Main = () => {
     setIsDark(!isDark);
   };
 
-  const handleAcceptCookies = () => setCookieConsent(true);
-  const handleDeclineCookies = () => setCookieConsent(false);
+  const acceptCookies = () => setCookieConsent(true);
+  const declineCookies = () => setCookieConsent(false);
 
   return (
-    <div className={isDark ? "dark-mode" : null}>
+    <div className={isDark ? "dark-mode" : ""}>
       <StyleProvider value={{ isDark, changeTheme }}>
         {isShowingSplashAnimation && splashScreen.enabled ? (
           <SplashScreen />
@@ -85,7 +86,7 @@ const Main = () => {
                   marginRight: "-50%",
                   transform: "translate(-50%, -50%)",
                   backgroundColor: "#232b3a",
-                  color: "white",
+                  color: "#fff",
                   borderRadius: "12px",
                   padding: "30px",
                   maxWidth: "400px",
@@ -105,7 +106,7 @@ const Main = () => {
               </p>
               <div style={{ marginTop: "20px" }}>
                 <button
-                  onClick={handleAcceptCookies}
+                  onClick={acceptCookies}
                   style={{
                     background: "linear-gradient(90deg, #06e6a0, #1fffd4)",
                     border: "none",
@@ -120,7 +121,7 @@ const Main = () => {
                   Zustimmen
                 </button>
                 <button
-                  onClick={handleDeclineCookies}
+                  onClick={declineCookies}
                   style={{
                     background: "#ef4444",
                     border: "none",
@@ -128,7 +129,7 @@ const Main = () => {
                     borderRadius: "30px",
                     fontWeight: "bold",
                     cursor: "pointer",
-                    color: "white",
+                    color: "#fff",
                   }}
                 >
                   Ablehnen
@@ -136,10 +137,9 @@ const Main = () => {
               </div>
               <p style={{ marginTop: "15px", fontSize: "0.9rem", color: "#bbb" }}>
                 Mehr Infos in der{" "}
-                <a href="/datenschutz" style={{ color: "#06e6a0" }}>
+                <a href="/datenschutz" style={{ color: "#06e6a0", textDecoration: "underline" }}>
                   Datenschutzerklärung
-                </a>
-                .
+                </a>.
               </p>
             </Modal>
           </>
