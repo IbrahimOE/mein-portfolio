@@ -1,10 +1,7 @@
 import React, { useEffect, useState } from "react";
-import Modal from "react-modal";
 import Header from "../components/header/Header";
-import ContactAnimation from "./contactAnimation/ContactAnimation";
 import Greeting from "./greeting/Greeting";
 import Skills from "./skills/Skills";
-import { initGA, logPageView } from "../utils/analytics";
 import StackProgress from "./skillProgress/skillProgress";
 import WorkExperience from "./workExperience/WorkExperience";
 import Projects from "./projects/Projects";
@@ -19,13 +16,15 @@ import ScrollToTopButton from "./topbutton/Top";
 import Twitter from "./twitter-embed/twitter";
 import Profile from "./profile/Profile";
 import SplashScreen from "./splashScreen/SplashScreen";
+import Modal from "react-modal";
+import { initGA, logPageView } from "../utils/analytics";
 import { splashScreen } from "../portfolio";
 import { StyleProvider } from "../contexts/StyleContext";
 import { useLocalStorage } from "../hooks/useLocalStorage";
 
 import "./Main.scss";
 
-Modal.setAppElement('#root'); // Accessibility: anpassen, falls root anders heißt
+Modal.setAppElement("#root"); // wichtig für Screenreader
 
 const Main = () => {
   const darkPref = window.matchMedia("(prefers-color-scheme: dark)");
@@ -33,51 +32,37 @@ const Main = () => {
   const [isShowingSplashAnimation, setIsShowingSplashAnimation] = useState(true);
 
   // Cookie Consent
-  const [showCookieModal, setShowCookieModal] = useState(false);
-  const [hasConsented, setHasConsented] = useState(false);
+  const [cookieConsent, setCookieConsent] = useState(
+    localStorage.getItem("cookieConsent") === "true"
+  );
+  const [showCookieModal, setShowCookieModal] = useState(!cookieConsent);
 
-  // Splashscreen Timer
   useEffect(() => {
     if (splashScreen.enabled) {
-      const splashTimer = setTimeout(() => setIsShowingSplashAnimation(false), splashScreen.duration);
-      return () => clearTimeout(splashTimer);
+      const timer = setTimeout(() => setIsShowingSplashAnimation(false), splashScreen.duration);
+      return () => clearTimeout(timer);
     }
   }, []);
 
-  // Prüfen ob Consent schon gesetzt wurde
   useEffect(() => {
-    const consent = localStorage.getItem("cookieConsent");
-    if (consent === "true") {
-      setHasConsented(true);
+    if (cookieConsent) {
       initGA();
       logPageView();
+      localStorage.setItem("cookieConsent", "true");
+      setShowCookieModal(false);
     } else {
-      setShowCookieModal(true);
+      localStorage.setItem("cookieConsent", "false");
+      // Optional: GA deaktivieren, Cookies löschen falls möglich
     }
-  }, []);
+  }, [cookieConsent]);
 
-  // Consent Entscheidung verarbeiten
-  const acceptCookies = () => {
-    setHasConsented(true);
-    localStorage.setItem("cookieConsent", "true");
-    initGA();
-    logPageView();
-    setShowCookieModal(false);
-  };
+  const changeTheme = () => setIsDark(!isDark);
 
-  const declineCookies = () => {
-    setHasConsented(false);
-    localStorage.setItem("cookieConsent", "false");
-    // Optional: hier kannst du GA-Cookies löschen, falls du das möchtest
-    setShowCookieModal(false);
-  };
-
-  const changeTheme = () => {
-    setIsDark(!isDark);
-  };
+  const acceptCookies = () => setCookieConsent(true);
+  const declineCookies = () => setCookieConsent(false);
 
   return (
-    <div className={isDark ? "dark-mode" : null}>
+    <div className={isDark ? "dark-mode" : undefined}>
       <StyleProvider value={{ isDark, changeTheme }}>
         {isShowingSplashAnimation && splashScreen.enabled ? (
           <SplashScreen />
@@ -85,7 +70,6 @@ const Main = () => {
           <>
             <Header />
             <Greeting />
-            <ContactAnimation />
             <Education />
             <Skills />
             <StackProgress />
@@ -105,63 +89,62 @@ const Main = () => {
             <Modal
               isOpen={showCookieModal}
               onRequestClose={() => {}}
-              shouldCloseOnOverlayClick={false}
-              shouldCloseOnEsc={false}
               style={{
-                overlay: {
-                  backgroundColor: "rgba(22,30,42,0.85)",
-                  zIndex: 10000,
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                },
                 content: {
-                  position: "relative",
-                  inset: "auto",
-                  padding: "30px",
-                  borderRadius: "24px",
                   maxWidth: "500px",
-                  width: "90%",
+                  margin: "auto",
+                  padding: "30px",
+                  borderRadius: "12px",
                   backgroundColor: "#232b3a",
                   color: "white",
-                  boxShadow: "0 4px 50px #06e6a05c",
+                  textAlign: "center",
+                },
+                overlay: {
+                  backgroundColor: "rgba(0, 0, 0, 0.7)",
+                  zIndex: 10000,
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
                 },
               }}
+              shouldCloseOnOverlayClick={false}
+              shouldCloseOnEsc={false}
+              ariaHideApp={true}
             >
-              <h2>Cookie-Einstellungen</h2>
+              <h2>Cookie-Einwilligung</h2>
               <p>
-                Diese Website verwendet Cookies für Analyse und Marketing. Bitte stimme der Nutzung zu oder lehne ab.
+                Unsere Website verwendet Cookies für Analyse und Marketing.
+                Bitte akzeptieren Sie, damit wir Ihre Nutzererfahrung verbessern können.
               </p>
-              <div style={{ marginTop: 20, textAlign: "right" }}>
-                <button
-                  onClick={declineCookies}
-                  style={{
-                    backgroundColor: "#ef4444",
-                    color: "white",
-                    border: "none",
-                    padding: "10px 20px",
-                    borderRadius: "12px",
-                    fontWeight: "600",
-                    cursor: "pointer",
-                    marginRight: "10px",
-                  }}
-                >
-                  Ablehnen
-                </button>
+              <div style={{ marginTop: "20px" }}>
                 <button
                   onClick={acceptCookies}
                   style={{
-                    background: "linear-gradient(90deg, #06e6a0, #1fffd4)",
-                    color: "#111827",
-                    border: "none",
+                    marginRight: "10px",
                     padding: "10px 20px",
-                    borderRadius: "12px",
-                    fontWeight: "700",
+                    borderRadius: "6px",
+                    border: "none",
+                    backgroundColor: "#06e6a0",
+                    color: "#232b3a",
                     cursor: "pointer",
-                    boxShadow: "0 0 10px #06e6a0",
+                    fontWeight: "bold",
                   }}
                 >
                   Akzeptieren
+                </button>
+                <button
+                  onClick={declineCookies}
+                  style={{
+                    padding: "10px 20px",
+                    borderRadius: "6px",
+                    border: "none",
+                    backgroundColor: "#ef4444",
+                    color: "white",
+                    cursor: "pointer",
+                    fontWeight: "bold",
+                  }}
+                >
+                  Ablehnen
                 </button>
               </div>
             </Modal>
