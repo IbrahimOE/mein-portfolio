@@ -1,221 +1,83 @@
-/* Section-Fond neutral; eigentlicher Look liegt im .nt-canvas::before */
-.nt-section {
+/* Clean Medical UI */
+.nt-section { padding: 56px 0; }
+.nt-header { text-align: center; margin-bottom: 20px; }
+.nt-title  { margin: 0; }
+.nt-sub    { margin-top: 8px; opacity: .85; font-size: .98rem; }
+
+.nt-wrap {
   position: relative;
-  padding: 2rem 1rem;
-  color: #e0f6ff;
-  overflow: hidden;
-  background: #0a0f15;
+  min-height: 520px;
 }
 
-/* Header */
-.nt-header {
-  text-align: center;
-  margin-bottom: 1.5rem;
-  position: relative;
-  z-index: 1;
-}
-.glow-title {
-  font-size: 2.4rem;
-  font-weight: 800;
-  background: linear-gradient(90deg, #ffffff, #aee8ff, #00bfff);
-  background-size: 200% auto;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  text-shadow:
-    0 0 5px rgba(0,191,255,0.7),
-    0 0 15px rgba(0,191,255,0.5),
-    0 0 25px rgba(0,191,255,0.35);
-  animation: shine 4s linear infinite;
-  margin-bottom: 0.4rem;
-}
-.subtitle {
-  font-size: 1.05rem;
-  color: #e6f6ff;
-  text-shadow: 0 0 5px rgba(0, 191, 255, 0.35);
-}
-@keyframes shine { to { background-position: 200% center; } }
-
-/* Layout */
-.nt-layout {
-  display: flex;
-  gap: 2rem;
-  align-items: flex-start;
-  flex-wrap: wrap;
-  position: relative;
-  z-index: 1;
-}
-
-/* 3D-Bereich */
-.nt-3d-wrap {
-  position: relative; /* für absolute Hotspots */
-  flex: 1 1 600px;
-}
-
-/* Canvas-Container: eigener medizinischer Hintergrund, Canvas transparent drüber */
 .nt-canvas {
+  position: relative;
   width: 100%;
-  height: 500px;
-  min-height: 320px;            /* Mobile-Sicherheit */
-  position: relative;
-  z-index: 2;
-  border-radius: 14px;
+  min-height: 520px;
+  border-radius: 16px;
   overflow: hidden;
-  box-shadow: 0 12px 28px rgba(0, 191, 255, 0.12), 0 2px 6px rgba(0,0,0,0.4);
-}
-.nt-canvas::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: 1; /* unter dem Canvas */
-  background:
-    radial-gradient(1200px 600px at 65% 10%, rgba(0, 191, 255, 0.10), transparent 60%),
-    linear-gradient(180deg, #0b121a 0%, #070b11 60%, #05080d 100%);
-}
-.nt-canvas canvas {
-  background: transparent !important;
-  position: relative;
-  z-index: 2;     /* über ::before */
-  display: block;
-  width: 100% !important;
-  height: 100% !important;
-  transform: translateZ(0);
-  will-change: transform, opacity;
-  backface-visibility: hidden;
+  /* kein background -> Canvas ist transparent */
 }
 
-/* Hotspots */
+/* + Marker – klar, ohne Schnickschnack */
 .nt-hotspot {
   position: absolute;
   transform: translate(-50%, -50%);
-  border: none;
-  background: none;
-  cursor: pointer;
-  z-index: 5;
-
-  .pulse-circle {
-    width: 28px;
-    height: 28px;
-    background: rgba(0, 191, 255, 0.3);
-    border-radius: 50%;
-    animation: pulseAnim 1.8s infinite;
-  }
-
-  .plus-icon {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    font-size: 18px;
-    font-weight: 700;
-    color: #fff;
-    background: #00bfff;
-    border-radius: 50%;
-    width: 20px;
-    height: 20px;
-    line-height: 20px;
-    text-align: center;
-    box-shadow: 0 0 12px rgba(0, 191, 255, 0.85);
-  }
+  width: 40px; height: 40px;
+  border-radius: 999px;
+  border: 2px solid #ffffff;
+  background: #2563eb; /* Klinik-Blau */
+  color: #ffffff;
+  font-weight: 800; font-size: 22px; line-height: 0;
+  display: grid; place-items: center;
+  cursor: pointer; z-index: 5;
+  box-shadow: 0 6px 18px rgba(0,0,0,.18);
+  transition: transform .12s ease, box-shadow .2s ease;
 }
-@keyframes pulseAnim {
-  0% { transform: scale(1); opacity: 0.9; }
-  50% { transform: scale(1.6); opacity: 0.25; }
-  100% { transform: scale(1); opacity: 0.9; }
+.nt-hotspot:hover {
+  transform: translate(-50%, -50%) scale(1.06);
+  box-shadow: 0 10px 28px rgba(0,0,0,.22);
 }
 
-/* Popover (Karte) */
+/* Popover neben Button */
 .nt-popover {
   position: absolute;
-  transform: translate(-50%, -50%);
-  z-index: 10;
-
-  &[data-side="left"]  { transform: translate(-110%, -50%); }
-  &[data-side="right"] { transform: translate(10%, -50%); }
+  transform: translateY(-50%);
+  z-index: 6;
+  pointer-events: none; /* nur Karte ist klickbar */
 }
+.nt-popover[data-side="right"] { transform: translate(14px, -50%); }
+.nt-popover[data-side="left"]  { transform: translate(-100%, -50%) translateX(-14px); }
+
 .nt-card {
-  backdrop-filter: blur(12px);
-  background: rgba(15, 25, 35, 0.9);
-  padding: 1rem;
-  border-radius: 12px;
-  min-width: 220px;
-  max-width: 280px;
-  box-shadow: 0 8px 22px rgba(0, 191, 255, 0.22);
-  border: 1px solid rgba(0, 191, 255, 0.25);
-  animation: fadeIn 0.25s ease;
+  pointer-events: auto;
+  min-width: 280px; max-width: 420px;
+  padding: 14px 16px; border-radius: 12px;
+  background: rgba(255,255,255,.96);
+  border: 1px solid rgba(0,0,0,.06);
+  box-shadow: 0 12px 36px rgba(0,0,0,.18);
+  position: relative;
 }
-.nt-card-title {
-  font-weight: 700;
-  margin-bottom: 0.55rem;
-  color: #00bfff;
-  font-size: 1.1rem;
+.dark-mode .nt-card {
+  background: rgba(17,25,40,.92);
+  color: #e5e7eb;
+  border-color: rgba(255,255,255,.08);
 }
-.nt-card-list {
-  margin: 0;
-  padding-left: 1.1rem;
-  font-size: 0.95rem;
-  color: #d0eaff;
-  li { margin-bottom: 0.45rem; }
+
+.nt-card::before {
+  content: "";
+  position: absolute; top: 50%; width: 12px; height: 12px;
+  transform: translateY(-50%) rotate(45deg);
+  background: inherit; border-left: inherit; border-top: inherit;
 }
+.nt-popover[data-side="right"] .nt-card::before { left: -6px; }
+.nt-popover[data-side="left"]  .nt-card::before { right: -6px; }
+
+.nt-card-title { font-weight: 700; margin-bottom: 8px; }
+.nt-card-list  { margin: 6px 0 10px 18px; padding: 0; }
+.nt-card-list li { margin: 4px 0; line-height: 1.35; }
+
 .nt-close {
-  background: none;
-  border: none;
-  color: #9acbe5;
-  font-size: 1.25rem;
-  margin-top: 0.6rem;
-  cursor: pointer;
-}
-
-/* Arbeitgeber-Card */
-.nt-info-card {
-  flex: 0 1 300px;
-  background: rgba(15, 25, 35, 0.95);
-  border-radius: 12px;
-  padding: 1.5rem;
-  box-shadow: 0 0 20px rgba(0, 191, 255, 0.3);
-  border: 1px solid rgba(0, 191, 255, 0.4);
-
-  h3 {
-    color: #00bfff;
-    margin-bottom: 0.6rem;
-    font-size: 1.3rem;
-    font-weight: 700;
-  }
-  p {
-    color: #9acbe5;
-    font-size: 0.95rem;
-    margin-bottom: 1rem;
-  }
-  ul {
-    list-style: none;
-    padding: 0;
-    li {
-      margin-bottom: 0.45rem;
-      font-size: 0.95rem;
-      color: #d0eaff;
-    }
-  }
-}
-
-/* Responsive */
-@media (max-width: 768px) {
-  .nt-layout { flex-direction: column; }
-  .nt-canvas { height: 420px; }
-
-  /* Popover unter das Modell schieben */
-  .nt-popover {
-    position: relative;
-    top: auto !important;
-    left: auto !important;
-    transform: none !important;
-    margin-top: 1rem;
-    display: flex;
-    justify-content: center;
-  }
-
-  .nt-info-card { margin-top: 1rem; }
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(6px); }
-  to   { opacity: 1; transform: translateY(0); }
+  margin-top: 6px;
+  background: #2563eb; color: #fff; border: none;
+  padding: 8px 12px; border-radius: 10px; font-weight: 700; cursor: pointer;
 }
