@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
+import { KTX2Loader } from 'three/examples/jsm/loaders/KTX2Loader.js';
 import { DRACOLoader } from "three/examples/jsm/loaders/DRACOLoader.js";
 import { MeshoptDecoder } from "three/examples/jsm/libs/meshopt_decoder.module.js";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
@@ -127,17 +128,24 @@ export default function NeuroTechnik() {
     brainRef.current = brain;
 
     // GLB laden (aus /public)
-    const BRAIN_URL = "/brain.glb";
-    const loader = new GLTFLoader();
+   // GLB laden (aus /public)
+const BRAIN_URL = "/brain.glb";
+const loader = new GLTFLoader();
 
-    // DRACO-Decoder (CDN) – keine Dateien kopieren nötig
-    const draco = new DRACOLoader();
-    draco.setDecoderConfig({ type: "wasm" }); // optional
-    draco.setDecoderPath("https://www.gstatic.com/draco/v1/decoders/");
-    loader.setDRACOLoader(draco);
+// DRACO via CDN (keine Dateien kopieren)
+const draco = new DRACOLoader();
+draco.setDecoderPath("https://www.gstatic.com/draco/v1/decoders/");
+loader.setDRACOLoader(draco);
 
-    // Meshopt-Dekoder (schadet nicht, falls dein GLB EXT_meshopt_compression nutzt)
-    loader.setMeshoptDecoder(MeshoptDecoder);
+// KTX2 (BasisU) via CDN – WICHTIG für komprimierte Texturen
+const ktx2 = new KTX2Loader()
+  .setTranscoderPath("https://www.gstatic.com/basis-universal-binaries/1.0.0/")
+  .detectSupport(renderer);
+loader.setKTX2Loader(ktx2);
+
+// (optional) Meshopt
+loader.setMeshoptDecoder(MeshoptDecoder);
+
 
     loader.load(
       BRAIN_URL,
