@@ -129,22 +129,26 @@ export default function NeuroTechnik() {
 
     // GLB laden (aus /public)
    // GLB laden (aus /public)
-const BRAIN_URL = "/brain.glb";
+// GLB laden (aus /public)
+const BRAIN_URL = '/brain.glb';
 const loader = new GLTFLoader();
 
-// DRACO via CDN (keine Dateien kopieren)
+// DRACO via CDN
 const draco = new DRACOLoader();
-draco.setDecoderPath("https://www.gstatic.com/draco/v1/decoders/");
+draco.setDecoderPath('https://www.gstatic.com/draco/v1/decoders/');
 loader.setDRACOLoader(draco);
 
-// KTX2 (BasisU) via CDN – WICHTIG für komprimierte Texturen
+// KTX2 (BasisU) via CDN – wichtig für komprimierte Texturen
 const ktx2 = new KTX2Loader()
-  .setTranscoderPath("https://www.gstatic.com/basis-universal-binaries/1.0.0/")
+  .setTranscoderPath('https://www.gstatic.com/basis-universal-binaries/1.0.0/')
   .detectSupport(renderer);
 loader.setKTX2Loader(ktx2);
 
-// (optional) Meshopt
+// optional, schadet nicht
 loader.setMeshoptDecoder(MeshoptDecoder);
+
+// …danach bleibt:
+loader.load(BRAIN_URL, onLoad, undefined, onError);
 
 
     loader.load(
