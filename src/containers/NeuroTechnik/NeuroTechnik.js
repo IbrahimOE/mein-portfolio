@@ -48,29 +48,48 @@ const HOTSPOTS = [
 ];
 
 export default function NeuroTechnik() {
-  const hostRef = useRef(null);
-  const btnRefs = useRef({});
-  const popoverRef = useRef(null);
-  const brainRef = useRef(null);
+  const hostRef = useRef(null);              // Container für das Canvas
+  const btnRefs = useRef({});                // Hotspot DOM-Buttons
+  const popoverRef = useRef(null);           // Popover DOM
+  const brainRef = useRef(null);             // 3D Gruppe
+  const selectedRef = useRef(null);          // Live-Ref für selected (für RAF-Loop)
   const [selected, setSelected] = useState(null);
+
+  // hält selected im RAF-Loop aktuell
+  useEffect(() => { selectedRef.current = selected; }, [selected]);
 
   useEffect(() => {
     const host = hostRef.current;
     let width = host.clientWidth;
     const height = 500;
 
-    // Renderer TRANSPARENT -> zeigt NUR den Hintergrund des Canvas-Containers
+    const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+
+    // Renderer: TRANSPARENT, Mobile-sicher
     const renderer = new THREE.WebGLRenderer({
       antialias: true,
       alpha: true,
+      premultipliedAlpha: false,
       powerPreference: "high-performance"
     });
-    renderer.setClearColor(0x000000, 0); // transparent
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+    renderer.setClearColor(0x000000, 0); // durchsichtig
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, isMobile ? 1.5 : 2));
     renderer.setSize(width, height);
-    renderer.outputEncoding = THREE.sRGBEncoding; // kompatibel zu deiner three-Version
+    // Canvas-Element-Größe zusätzlich hart setzen (gegen Mobile-Layout-Shifts)
+    renderer.domElement.style.width = "100%";
+    renderer.domElement.style.height = `${height}px`;
+
+    // Farbraum (kompatibel mit älterem three)
+    renderer.outputEncoding = THREE.sRGBEncoding;
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
     renderer.toneMappingExposure = 1.0;
+
+    // WebGL Kontextverlust abfangen (manche Android-Geräte)
+    renderer.domElement.addEventListener("webglcontextlost", (e) => {
+      e.preventDefault();
+      console.warn("WebGL context lost");
+    });
+
     host.appendChild(renderer.domElement);
 
     // Szene & Kamera
@@ -78,7 +97,7 @@ export default function NeuroTechnik() {
     const camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 100);
     camera.position.set(0, 0.6, 2);
 
-    // Licht (hell genug für Prod/Mobil)
+    // Licht – hell & klinisch
     scene.add(new THREE.AmbientLight(0xffffff, 0.9));
     const hemi = new THREE.HemisphereLight(0xbfd9ff, 0x0b0f14, 0.5);
     scene.add(hemi);
@@ -86,7 +105,7 @@ export default function NeuroTechnik() {
     keyLight.position.set(2, 2, 2);
     scene.add(keyLight);
 
-    // Controls
+    // Controls – smooth, nur Rotieren
     const controls = new OrbitControls(camera, renderer.domElement);
     controls.enableZoom = false;
     controls.enablePan = false;
@@ -96,7 +115,7 @@ export default function NeuroTechnik() {
     controls.autoRotate = true;
     controls.autoRotateSpeed = 0.4;
 
-    // Gehirn-Gruppe
+    // Gehirn-Container
     const brain = new THREE.Group();
     scene.add(brain);
     brainRef.current = brain;
@@ -109,6 +128,9 @@ export default function NeuroTechnik() {
       (gltf) => {
         const root = gltf.scene;
 
+        // Sicherheitsnetz: niemals weggeculled (Mobile-Frustum-Probleme)
+        root.traverse((o) => { o.frustumCulled = false; });
+
         // Normalisieren & zentrieren
         const box = new THREE.Box3().setFromObject(root);
         const size = new THREE.Vector3();
@@ -120,7 +142,7 @@ export default function NeuroTechnik() {
         box.getCenter(center);
         root.position.sub(center);
 
-        // Material – medizinisch, gut sichtbar
+        // Material – medizinisch und gut sichtbar
         root.traverse((o) => {
           if (o.isMesh && o.material) {
             o.material.roughness = 0.25;
@@ -131,6 +153,7 @@ export default function NeuroTechnik() {
             o.material.transparent = false;
             o.material.depthTest = true;
             o.material.side = THREE.FrontSide;
+            o.material.needsUpdate = true; // sicher für Mobile
           }
         });
 
@@ -141,7 +164,7 @@ export default function NeuroTechnik() {
       (err) => console.error("[GLB] Load error:", url, err)
     );
 
-    // Welt -> Canvas-Koordinaten
+    // Welt -> Canvas-Koordinaten (CSS-Pixel)
     const worldToScreen = (v3) => {
       const canvasRect = renderer.domElement.getBoundingClientRect();
       const p = v3.clone().project(camera);
@@ -151,8 +174,9 @@ export default function NeuroTechnik() {
     };
 
     const animate = () => {
-      // Buttons positionieren (Canvas→Container-Offset berücksichtigen)
       const hostRect = host.getBoundingClientRect();
+
+      // Hotspots positionieren (Canvas→Container Offset berücksichtigen)
       HOTSPOTS.forEach((h) => {
         const btn = btnRefs.current[h.key];
         if (!btn) return;
@@ -165,11 +189,11 @@ export default function NeuroTechnik() {
         btn.style.top = `${offsetY + y}px`;
       });
 
-      // Popover neben aktivem Hotspot positionieren
-      if (selected && popoverRef.current) {
-        const anchor = btnRefs.current[selected.key];
+      // Popover neben aktivem Hotspot anheften (mit live-Ref)
+      const sel = selectedRef.current;
+      if (sel && popoverRef.current) {
+        const anchor = btnRefs.current[sel.key];
         if (anchor) {
-          const hostRect = host.getBoundingClientRect();
           const bx = parseFloat(anchor.style.left) || 0;
           const by = parseFloat(anchor.style.top) || 0;
           const side = (bx - (hostRect.left + hostRect.width / 2)) > 0 ? "left" : "right";
@@ -183,9 +207,9 @@ export default function NeuroTechnik() {
       renderer.render(scene, camera);
       requestAnimationFrame(animate);
     };
-    animate();
+    requestAnimationFrame(animate);
 
-    // Resize robust
+    // Resize robust (auch bei initial 0px)
     const onResize = () => {
       const w = host.clientWidth;
       renderer.setSize(w, height);
@@ -193,7 +217,7 @@ export default function NeuroTechnik() {
       camera.updateProjectionMatrix();
     };
     window.addEventListener("resize", onResize);
-    if (width === 0) setTimeout(onResize, 50);
+    if (width === 0) setTimeout(onResize, 80);
 
     // Cleanup
     return () => {
@@ -202,7 +226,7 @@ export default function NeuroTechnik() {
       renderer.dispose();
       host.removeChild(renderer.domElement);
     };
-  }, []); // init nur einmal
+  }, []); // nur einmal initialisieren
 
   return (
     <section id="neurotechnik" className="nt-section">
@@ -213,7 +237,7 @@ export default function NeuroTechnik() {
 
       <div className="nt-layout">
         <div className="nt-3d-wrap">
-          {/* Der eigene medizinische Hintergrund sitzt IM Container unter dem Canvas */}
+          {/* eigener medizinischer Hintergrund liegt im ::before von nt-canvas */}
           <div ref={hostRef} className="nt-canvas" />
 
           {HOTSPOTS.map((h) => (
