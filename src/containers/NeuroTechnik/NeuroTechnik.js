@@ -1,184 +1,211 @@
-import React, { useEffect, useRef, useState, useContext } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
-import StyleContext from "../../contexts/StyleContext";
+import "./NeuroTechnik.scss";
 
-const PART_INFO = {
-  Cerebrum: { title: "Großhirn (Cortex)", bullets: ["DICOM-Workflows (PACS, Routing, Pseudonymisierung)", "Bildqualität & Artefaktanalyse (SNR, Uniformity)", "fMRT/DTI Daten-Handling & Protokollpflege"] },
-  Cerebellum: { title: "Kleinhirn", bullets: ["MRT-Parameter/Protokolle mit Technik abgestimmt", "Störungsanalyse anhand Geräte-Logs", "Qualitätssicherung automatisiert"] },
-  Brainstem: { title: "Hirnstamm", bullets: ["Ausfall-/Eskalationspfade dokumentiert", "Sicherheits- & Datenschutzkonzepte (MedTech)", "Schulungen zur Bildkette/IT"] }
-};
-const fallbackInfo = (name) => ({ title: `Struktur: ${name}`, bullets: ["Dokumentation & Messprotokolle gepflegt", "Fehlerbilder klassifiziert und nachverfolgt"] });
+const HOTSPOTS = [
+  {
+    key: "brainstem",
+    name: "Hirnstamm",
+    pos: [0.02, -0.18, -0.05],
+    bullets: [
+      "Entwicklung von Software zur Analyse neuronaler Signale",
+      "Implementierung klinischer Datenschnittstellen",
+      "Integration in IT-Systeme der Klinik"
+    ]
+  },
+  {
+    key: "frontal",
+    name: "Frontallappen",
+    pos: [0.22, 0.10, 0.08],
+    bullets: [
+      "Programmierung kognitiver Testsoftware",
+      "Automatisierte Artefakt-Erkennung in EEG-Daten",
+      "IT-gestützte Dokumentationssysteme"
+    ]
+  },
+  {
+    key: "occipital",
+    name: "Okzipitallappen",
+    pos: [-0.20, 0.10, -0.10],
+    bullets: [
+      "Softwaremodule für visuelle Reizverarbeitung",
+      "Kalibrierung von Aufzeichnungssystemen",
+      "Sichere Datenspeicherung nach DSGVO"
+    ]
+  },
+  {
+    key: "cerebellum",
+    name: "Kleinhirn",
+    pos: [-0.16, -0.04, -0.04],
+    bullets: [
+      "IT-gestützte Funktionstests",
+      "Geräte-Log-Analyse zur Fehlerbehebung",
+      "Schnittstellenpflege zu Diagnosesystemen"
+    ]
+  }
+];
 
 export default function NeuroTechnik() {
-  const mountRef = useRef(null);
-  const { isDark } = useContext(StyleContext);
+  const hostRef = useRef(null);
+  const btnRefs = useRef({});
+  const popoverRef = useRef(null);
   const [selected, setSelected] = useState(null);
+  const brainRef = useRef(null);
 
   useEffect(() => {
-    const mount = mountRef.current;
-    const width = mount.clientWidth;
-    const height = 420;
+    const host = hostRef.current;
+    const width = host.clientWidth;
+    const height = 500;
 
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-    renderer.setPixelRatio(window.devicePixelRatio || 1);
     renderer.setSize(width, height);
-    mount.appendChild(renderer.domElement);
+    host.appendChild(renderer.domElement);
 
     const scene = new THREE.Scene();
-    scene.background = null;
-
     const camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 100);
-    camera.position.set(0, 0.7, 2.2);
+    camera.position.set(0, 0.6, 2);
 
-    scene.add(new THREE.AmbientLight(0xffffff, 0.85));
-    const dir = new THREE.DirectionalLight(0xffffff, 0.9);
-    dir.position.set(2, 2, 2);
-    scene.add(dir);
+    scene.add(new THREE.AmbientLight(0xffffff, 0.6));
+    const keyLight = new THREE.DirectionalLight(0x00bfff, 1.2);
+    keyLight.position.set(2, 2, 2);
+    scene.add(keyLight);
 
     const controls = new OrbitControls(camera, renderer.domElement);
+    controls.enableZoom = false;
     controls.enablePan = false;
-    controls.minDistance = 1.6;
-    controls.maxDistance = 3.2;
+    controls.autoRotate = true;
+    controls.autoRotateSpeed = 0.4;
 
-    const raycaster = new THREE.Raycaster();
-    const mouse = new THREE.Vector2();
-    let hit = null;
-
-    const group = new THREE.Group();
-    scene.add(group);
+    const brain = new THREE.Group();
+    scene.add(brain);
+    brainRef.current = brain;
 
     const loader = new GLTFLoader();
     loader.load(
-      "/assets/models/brain.glb",
+      (process.env.PUBLIC_URL || "") + "/assets/models/brain.glb",
       (gltf) => {
         const root = gltf.scene;
-        root.traverse((o) => {
-          if (o.isMesh) {
-            o.userData._baseColor = o.material.color.getHex();
-          }
-        });
-        // Normalisieren & zentrieren
         const box = new THREE.Box3().setFromObject(root);
         const size = new THREE.Vector3();
         box.getSize(size);
-        const scale = 1.2 / Math.max(size.x, size.y, size.z);
+        const scale = 1.8 / Math.max(size.x, size.y, size.z);
         root.scale.setScalar(scale);
         box.setFromObject(root);
         const center = new THREE.Vector3();
         box.getCenter(center);
         root.position.sub(center);
-        group.add(root);
-      },
-      undefined,
-      (err) => console.error("GLB load error:", err)
+
+        root.traverse((o) => {
+          if (o.isMesh) {
+            o.material.roughness = 0.2;
+            o.material.metalness = 0;
+            o.material.emissive = new THREE.Color(0x00bfff);
+            o.material.emissiveIntensity = 0.3;
+          }
+        });
+
+        brain.add(root);
+      }
     );
 
-    let stopRotation = false;
+    const worldToScreen = (v3) => {
+      const rect = renderer.domElement.getBoundingClientRect();
+      const p = v3.clone().project(camera);
+      return {
+        x: (p.x * 0.5 + 0.5) * rect.width,
+        y: (-p.y * 0.5 + 0.5) * rect.height
+      };
+    };
+
     const animate = () => {
-      if (!stopRotation) group.rotation.y += 0.003;
+      HOTSPOTS.forEach((h) => {
+        const btn = btnRefs.current[h.key];
+        if (!btn) return;
+        const local = new THREE.Vector3(...h.pos);
+        brain.localToWorld(local);
+        const { x, y } = worldToScreen(local);
+        btn.style.left = `${x}px`;
+        btn.style.top = `${y}px`;
+      });
+
+      if (selected && popoverRef.current) {
+        const anchor = btnRefs.current[selected.key];
+        if (anchor) {
+          const rect = renderer.domElement.getBoundingClientRect();
+          const bx = parseFloat(anchor.style.left) || rect.width / 2;
+          const by = parseFloat(anchor.style.top) || rect.height / 2;
+          popoverRef.current.style.left = `${bx}px`;
+          popoverRef.current.style.top = `${by}px`;
+        }
+      }
+
+      controls.update();
       renderer.render(scene, camera);
       requestAnimationFrame(animate);
     };
     animate();
 
-    const onPointerMove = (event) => {
-      const rect = renderer.domElement.getBoundingClientRect();
-      mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
-      mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
-      raycaster.setFromCamera(mouse, camera);
-      const meshes = [];
-      group.traverse((o) => o.isMesh && meshes.push(o));
-      const hits = raycaster.intersectObjects(meshes, true);
-      document.body.style.cursor = hits.length ? "pointer" : "default";
-      hit = hits.length ? hits[0].object : null;
-    };
-
-    const onClick = () => {
-      if (!hit) return;
-      stopRotation = true;
-      const name = hit.name || "Unbekannt";
-      const info = PART_INFO[name] || fallbackInfo(name);
-      // Reset Farben, highlight Auswahl
-      group.traverse((o) => o.isMesh && o.userData._baseColor && o.material.color.setHex(o.userData._baseColor));
-      hit.material = hit.material.clone();
-      hit.material.color.set("#66aaff");
-      setSelected({ name, info });
-    };
-
     const onResize = () => {
-      const w = mount.clientWidth;
+      const w = host.clientWidth;
       renderer.setSize(w, height);
       camera.aspect = w / height;
       camera.updateProjectionMatrix();
     };
-
     window.addEventListener("resize", onResize);
-    renderer.domElement.addEventListener("pointermove", onPointerMove);
-    renderer.domElement.addEventListener("click", onClick);
 
     return () => {
       window.removeEventListener("resize", onResize);
-      renderer.domElement.removeEventListener("pointermove", onPointerMove);
-      renderer.domElement.removeEventListener("click", onClick);
       controls.dispose();
       renderer.dispose();
-      mount.removeChild(renderer.domElement);
+      host.removeChild(renderer.domElement);
     };
-  }, []);
-
-  // Theme-Farben vereinheitlichen
-  const panelBg = isDark ? "#0e1624" : "#ffffff";
-  const panelText = isDark ? "#e5e7eb" : "#111827";
-  const border = isDark ? "1px solid rgba(255,255,255,.08)" : "1px solid rgba(0,0,0,.08)";
+  }, [selected]);
 
   return (
-    <section id="neurotechnik" style={{ padding: "40px 0" }}>
-      <h1 style={{ margin: "0 0 12px", color: panelText }}>NeuroTechnik</h1>
-      <p style={{ margin: "0 0 16px", opacity: 0.85, color: panelText }}>
-        3D-Gehirn: rotiert langsam. Klicke auf Bereiche für Details.
-      </p>
+    <section id="neurotechnik" className="nt-section">
+      <header className="nt-header">
+        <h1 className="glow-title">Neurotechnische Funktionaldiagnostik</h1>
+        <p className="subtitle">Präzise Analyse · Visuelle Darstellung · Klinische Integration</p>
+      </header>
 
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "minmax(280px, 1.2fr) minmax(240px, 0.8fr)",
-          gap: 16,
-          alignItems: "stretch"
-        }}
-      >
-        {/* Canvas-Panel */}
-        <div
-          ref={mountRef}
-          style={{
-            background: panelBg,
-            color: panelText,
-            borderRadius: 12,
-            overflow: "hidden",
-            minHeight: 420,
-            border
-          }}
-        />
+      <div className="nt-layout">
+        <div className="nt-3d-wrap">
+          <div ref={hostRef} className="nt-canvas" />
+          {HOTSPOTS.map((h) => (
+            <button
+              key={h.key}
+              ref={(el) => (btnRefs.current[h.key] = el)}
+              className="nt-hotspot"
+              onClick={() => setSelected(h)}
+            >
+              <span className="pulse-circle"></span>
+              <span className="plus-icon">+</span>
+            </button>
+          ))}
+          {selected && (
+            <div ref={popoverRef} className="nt-popover">
+              <div className="nt-card">
+                <div className="nt-card-title">{selected.name}</div>
+                <ul className="nt-card-list">
+                  {selected.bullets.map((b, i) => (
+                    <li key={i}>{b}</li>
+                  ))}
+                </ul>
+                <button className="nt-close" onClick={() => setSelected(null)}>×</button>
+              </div>
+            </div>
+          )}
+        </div>
 
-        {/* Info-Panel */}
-        <aside
-          style={{
-            border,
-            borderRadius: 12,
-            padding: 16,
-            background: panelBg,
-            color: panelText
-          }}
-        >
-          <h3 style={{ marginTop: 0 }}>{selected?.info?.title || "Bereich wählen"}</h3>
-          <ul style={{ margin: "8px 0 0 18px" }}>
-            {(selected?.info?.bullets || [
-              "Klicke auf Großhirn, Kleinhirn oder Hirnstamm.",
-              "Die zugehörigen Tätigkeiten erscheinen hier."
-            ]).map((b, i) => (
-              <li key={i}>{b}</li>
-            ))}
+        <aside className="nt-info-card">
+          <h3>🏥 Uniklinik Frankfurt</h3>
+          <p>Abteilung für Neurotechnische Funktionaldiagnostik</p>
+          <ul>
+            <li>📍 Frankfurt am Main</li>
+            <li>🧠 Neurowissenschaften & IT</li>
+            <li>🔬 Modernste Diagnosetechnik</li>
           </ul>
         </aside>
       </div>
