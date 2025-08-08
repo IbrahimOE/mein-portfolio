@@ -122,8 +122,7 @@ export default function NeuroTechnik() {
 
     // GLB laden
     const loader = new GLTFLoader();
-    const url = `${process.env.PUBLIC_URL || ""}/assets/models/brain.glb`;
-    loader.load(
+    const url = `/assets/models/brain.glb`;    loader.load(
       url,
       (gltf) => {
         const root = gltf.scene;
