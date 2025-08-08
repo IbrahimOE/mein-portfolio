@@ -51,91 +51,132 @@ export default function NeuroTechnik() {
   const hostRef = useRef(null);
   const btnRefs = useRef({});
   const popoverRef = useRef(null);
-  const [selected, setSelected] = useState(null);
   const brainRef = useRef(null);
+  const [selected, setSelected] = useState(null);
 
   useEffect(() => {
     const host = hostRef.current;
-    const width = host.clientWidth;
+    let width = host.clientWidth;
     const height = 500;
 
-    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    // Renderer mit TRANSPARENZ (kein schwarzer Hintergrund)
+    const renderer = new THREE.WebGLRenderer({
+      antialias: true,
+      alpha: true, // Transparenter Hintergrund
+      powerPreference: "high-performance"
+    });
+    renderer.setClearColor(0x000000, 0); // 0 = transparent
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
     renderer.setSize(width, height);
+    renderer.outputEncoding = THREE.sRGBEncoding;
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.0;
     host.appendChild(renderer.domElement);
 
+    // Szene & Kamera
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 100);
     camera.position.set(0, 0.6, 2);
 
-    scene.add(new THREE.AmbientLight(0xffffff, 0.6));
-    const keyLight = new THREE.DirectionalLight(0x00bfff, 1.2);
+    // Licht – hell genug für Prod/Mobil
+    scene.add(new THREE.AmbientLight(0xffffff, 0.9));
+    const hemi = new THREE.HemisphereLight(0xbfd9ff, 0x0b0f14, 0.5);
+    scene.add(hemi);
+    const keyLight = new THREE.DirectionalLight(0x66ccff, 1.4);
     keyLight.position.set(2, 2, 2);
     scene.add(keyLight);
 
+    // Controls
     const controls = new OrbitControls(camera, renderer.domElement);
     controls.enableZoom = false;
     controls.enablePan = false;
+    controls.enableRotate = true;
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.06;
     controls.autoRotate = true;
     controls.autoRotateSpeed = 0.4;
 
+    // Gehirn-Gruppe
     const brain = new THREE.Group();
     scene.add(brain);
     brainRef.current = brain;
 
+    // GLB laden
     const loader = new GLTFLoader();
+    const url = `${process.env.PUBLIC_URL || ""}/assets/models/brain.glb`;
     loader.load(
-      (process.env.PUBLIC_URL || "") + "/assets/models/brain.glb",
+      url,
       (gltf) => {
         const root = gltf.scene;
+
+        // Normalisieren & zentrieren
         const box = new THREE.Box3().setFromObject(root);
         const size = new THREE.Vector3();
         box.getSize(size);
-        const scale = 1.8 / Math.max(size.x, size.y, size.z);
+        const scale = 1.8 / Math.max(size.x, size.y, size.z || 1);
         root.scale.setScalar(scale);
         box.setFromObject(root);
         const center = new THREE.Vector3();
         box.getCenter(center);
         root.position.sub(center);
 
+        // Material – medizinisch, gut sichtbar
         root.traverse((o) => {
-          if (o.isMesh) {
-            o.material.roughness = 0.2;
-            o.material.metalness = 0;
-            o.material.emissive = new THREE.Color(0x00bfff);
-            o.material.emissiveIntensity = 0.3;
+          if (o.isMesh && o.material) {
+            o.material.roughness = 0.25;
+            o.material.metalness = 0.0;
+            o.material.color = new THREE.Color(0x9fd9ff);
+            o.material.emissive = new THREE.Color(0x0d3b66);
+            o.material.emissiveIntensity = 0.08;
+            o.material.transparent = false;
+            o.material.depthTest = true;
+            o.material.side = THREE.FrontSide;
           }
         });
 
         brain.add(root);
+        // eslint-disable-next-line no-console
+        console.log("[GLB] geladen:", url);
+      },
+      undefined,
+      (err) => {
+        // eslint-disable-next-line no-console
+        console.error("[GLB] Load error:", url, err);
       }
     );
 
+    // Welt -> Canvas-Koordinaten
     const worldToScreen = (v3) => {
-      const rect = renderer.domElement.getBoundingClientRect();
+      const canvasRect = renderer.domElement.getBoundingClientRect();
       const p = v3.clone().project(camera);
-      return {
-        x: (p.x * 0.5 + 0.5) * rect.width,
-        y: (-p.y * 0.5 + 0.5) * rect.height
-      };
+      const x = (p.x * 0.5 + 0.5) * canvasRect.width;
+      const y = (-p.y * 0.5 + 0.5) * canvasRect.height;
+      return { x, y, canvasRect };
     };
 
     const animate = () => {
+      // Buttons positionieren (Canvas→Container-Offset berücksichtigen)
+      const hostRect = host.getBoundingClientRect();
       HOTSPOTS.forEach((h) => {
         const btn = btnRefs.current[h.key];
         if (!btn) return;
         const local = new THREE.Vector3(...h.pos);
         brain.localToWorld(local);
-        const { x, y } = worldToScreen(local);
-        btn.style.left = `${x}px`;
-        btn.style.top = `${y}px`;
+        const { x, y, canvasRect } = worldToScreen(local);
+        const offsetX = canvasRect.left - hostRect.left;
+        const offsetY = canvasRect.top - hostRect.top;
+        btn.style.left = `${offsetX + x}px`;
+        btn.style.top = `${offsetY + y}px`;
       });
 
+      // Popover neben aktivem Hotspot positionieren
       if (selected && popoverRef.current) {
         const anchor = btnRefs.current[selected.key];
         if (anchor) {
-          const rect = renderer.domElement.getBoundingClientRect();
-          const bx = parseFloat(anchor.style.left) || rect.width / 2;
-          const by = parseFloat(anchor.style.top) || rect.height / 2;
+          const bx = parseFloat(anchor.style.left) || 0;
+          const by = parseFloat(anchor.style.top) || 0;
+          const side = (bx - (hostRect.left + hostRect.width / 2)) > 0 ? "left" : "right";
+          popoverRef.current.dataset.side = side;
           popoverRef.current.style.left = `${bx}px`;
           popoverRef.current.style.top = `${by}px`;
         }
@@ -147,6 +188,7 @@ export default function NeuroTechnik() {
     };
     animate();
 
+    // Resize robust
     const onResize = () => {
       const w = host.clientWidth;
       renderer.setSize(w, height);
@@ -154,14 +196,16 @@ export default function NeuroTechnik() {
       camera.updateProjectionMatrix();
     };
     window.addEventListener("resize", onResize);
+    if (width === 0) setTimeout(onResize, 50);
 
+    // Cleanup
     return () => {
       window.removeEventListener("resize", onResize);
       controls.dispose();
       renderer.dispose();
       host.removeChild(renderer.domElement);
     };
-  }, [selected]);
+  }, []); // init nur einmal
 
   return (
     <section id="neurotechnik" className="nt-section">
@@ -173,17 +217,20 @@ export default function NeuroTechnik() {
       <div className="nt-layout">
         <div className="nt-3d-wrap">
           <div ref={hostRef} className="nt-canvas" />
+
           {HOTSPOTS.map((h) => (
             <button
               key={h.key}
               ref={(el) => (btnRefs.current[h.key] = el)}
               className="nt-hotspot"
               onClick={() => setSelected(h)}
+              aria-label={`${h.name} anzeigen`}
             >
               <span className="pulse-circle"></span>
               <span className="plus-icon">+</span>
             </button>
           ))}
+
           {selected && (
             <div ref={popoverRef} className="nt-popover">
               <div className="nt-card">
@@ -193,7 +240,9 @@ export default function NeuroTechnik() {
                     <li key={i}>{b}</li>
                   ))}
                 </ul>
-                <button className="nt-close" onClick={() => setSelected(null)}>×</button>
+                <button className="nt-close" onClick={() => setSelected(null)} aria-label="Schließen">
+                  ×
+                </button>
               </div>
             </div>
           )}
