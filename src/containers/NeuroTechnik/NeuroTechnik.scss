@@ -1,12 +1,10 @@
-/* Ruhiger, dunkler Klinik-Hintergrund ohne Quadrate */
+/* Gesamte Section – neutral dunkel; eigentlicher Look liegt im .nt-canvas::before */
 .nt-section {
   position: relative;
   padding: 2rem 1rem;
   color: #e0f6ff;
   overflow: hidden;
-  background:
-    radial-gradient(1200px 600px at 65% 10%, rgba(0, 191, 255, 0.07), transparent 60%),
-    linear-gradient(180deg, #0b121a 0%, #070b11 60%, #05080d 100%);
+  background: #0a0f15; /* neutraler, ruhiger Fond */
 }
 
 /* Header */
@@ -53,18 +51,34 @@
   flex: 1 1 600px;
 }
 
-/* Canvas */
+/* Canvas-Container: EIGENER medizinischer Hintergrund + Canvas oben drüber */
 .nt-canvas {
   width: 100%;
   height: 500px;
   position: relative;
   z-index: 2;
+  border-radius: 14px;
+  overflow: hidden; /* nichts darf außerhalb „durchscheinen“ */
+  box-shadow: 0 12px 28px rgba(0, 191, 255, 0.12), 0 2px 6px rgba(0,0,0,0.4);
 }
+
+/* Hintergrund unter dem WebGL-Canvas */
+.nt-canvas::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1; /* unter dem Canvas */
+  background:
+    radial-gradient(1200px 600px at 65% 10%, rgba(0, 191, 255, 0.10), transparent 60%),
+    linear-gradient(180deg, #0b121a 0%, #070b11 60%, #05080d 100%);
+}
+
+/* Das WebGL-Canvas selbst */
 .nt-canvas canvas {
-  background: transparent !important;
-  display: block;
+  background: transparent !important; /* Canvas ist durchsichtig */
   position: relative;
-  z-index: 3;
+  z-index: 2; /* ÜBER dem ::before-Background */
+  display: block;
   transform: translateZ(0);
   will-change: transform, opacity;
   backface-visibility: hidden;
@@ -104,14 +118,13 @@
     box-shadow: 0 0 12px rgba(0, 191, 255, 0.85);
   }
 }
-
 @keyframes pulseAnim {
   0% { transform: scale(1); opacity: 0.9; }
   50% { transform: scale(1.6); opacity: 0.25; }
   100% { transform: scale(1); opacity: 0.9; }
 }
 
-/* Popover */
+/* Popover (Karte) */
 .nt-popover {
   position: absolute;
   transform: translate(-50%, -50%);
@@ -201,4 +214,9 @@
   }
 
   .nt-info-card { margin-top: 1rem; }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
 }

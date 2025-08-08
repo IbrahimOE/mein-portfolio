@@ -59,16 +59,16 @@ export default function NeuroTechnik() {
     let width = host.clientWidth;
     const height = 500;
 
-    // Renderer mit TRANSPARENZ (kein schwarzer Hintergrund)
+    // Renderer TRANSPARENT -> zeigt NUR den Hintergrund des Canvas-Containers
     const renderer = new THREE.WebGLRenderer({
       antialias: true,
-      alpha: true, // Transparenter Hintergrund
+      alpha: true,
       powerPreference: "high-performance"
     });
-    renderer.setClearColor(0x000000, 0); // 0 = transparent
+    renderer.setClearColor(0x000000, 0); // transparent
     renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
     renderer.setSize(width, height);
-    renderer.outputEncoding = THREE.sRGBEncoding;
+    renderer.outputEncoding = THREE.sRGBEncoding; // kompatibel zu deiner three-Version
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
     renderer.toneMappingExposure = 1.0;
     host.appendChild(renderer.domElement);
@@ -78,7 +78,7 @@ export default function NeuroTechnik() {
     const camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 100);
     camera.position.set(0, 0.6, 2);
 
-    // Licht – hell genug für Prod/Mobil
+    // Licht (hell genug für Prod/Mobil)
     scene.add(new THREE.AmbientLight(0xffffff, 0.9));
     const hemi = new THREE.HemisphereLight(0xbfd9ff, 0x0b0f14, 0.5);
     scene.add(hemi);
@@ -135,14 +135,10 @@ export default function NeuroTechnik() {
         });
 
         brain.add(root);
-        // eslint-disable-next-line no-console
         console.log("[GLB] geladen:", url);
       },
       undefined,
-      (err) => {
-        // eslint-disable-next-line no-console
-        console.error("[GLB] Load error:", url, err);
-      }
+      (err) => console.error("[GLB] Load error:", url, err)
     );
 
     // Welt -> Canvas-Koordinaten
@@ -173,6 +169,7 @@ export default function NeuroTechnik() {
       if (selected && popoverRef.current) {
         const anchor = btnRefs.current[selected.key];
         if (anchor) {
+          const hostRect = host.getBoundingClientRect();
           const bx = parseFloat(anchor.style.left) || 0;
           const by = parseFloat(anchor.style.top) || 0;
           const side = (bx - (hostRect.left + hostRect.width / 2)) > 0 ? "left" : "right";
@@ -216,6 +213,7 @@ export default function NeuroTechnik() {
 
       <div className="nt-layout">
         <div className="nt-3d-wrap">
+          {/* Der eigene medizinische Hintergrund sitzt IM Container unter dem Canvas */}
           <div ref={hostRef} className="nt-canvas" />
 
           {HOTSPOTS.map((h) => (
