@@ -1,6 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
 import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
+import { DRACOLoader } from "three/examples/jsm/loaders/DRACOLoader.js";
+import { MeshoptDecoder } from "three/examples/jsm/libs/meshopt_decoder.module.js";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import "./NeuroTechnik.scss";
 
@@ -12,28 +14,28 @@ const HOTSPOTS = [
     bullets: [
       "Entwicklung von Software zur Analyse neuronaler Signale",
       "Implementierung klinischer Datenschnittstellen",
-      "Integration in IT-Systeme der Klinik"
-    ]
+      "Integration in IT-Systeme der Klinik",
+    ],
   },
   {
     key: "frontal",
     name: "Frontallappen",
-    pos: [0.22, 0.10, 0.08],
+    pos: [0.22, 0.1, 0.08],
     bullets: [
       "Programmierung kognitiver Testsoftware",
       "Automatisierte Artefakt-Erkennung in EEG-Daten",
-      "IT-gestützte Dokumentationssysteme"
-    ]
+      "IT-gestützte Dokumentationssysteme",
+    ],
   },
   {
     key: "occipital",
     name: "Okzipitallappen",
-    pos: [-0.20, 0.10, -0.10],
+    pos: [-0.2, 0.1, -0.1],
     bullets: [
       "Softwaremodule für visuelle Reizverarbeitung",
       "Kalibrierung von Aufzeichnungssystemen",
-      "Sichere Datenspeicherung nach DSGVO"
-    ]
+      "Sichere Datenspeicherung nach DSGVO",
+    ],
   },
   {
     key: "cerebellum",
@@ -42,21 +44,23 @@ const HOTSPOTS = [
     bullets: [
       "IT-gestützte Funktionstests",
       "Geräte-Log-Analyse zur Fehlerbehebung",
-      "Schnittstellenpflege zu Diagnosesystemen"
-    ]
-  }
+      "Schnittstellenpflege zu Diagnosesystemen",
+    ],
+  },
 ];
 
 export default function NeuroTechnik() {
-  const hostRef = useRef(null);              // Container für das Canvas
-  const btnRefs = useRef({});                // Hotspot DOM-Buttons
-  const popoverRef = useRef(null);           // Popover DOM
-  const brainRef = useRef(null);             // 3D Gruppe
-  const selectedRef = useRef(null);          // Live-Ref für selected (für RAF-Loop)
+  const hostRef = useRef(null); // Container für das Canvas
+  const btnRefs = useRef({}); // Hotspot DOM-Buttons
+  const popoverRef = useRef(null); // Popover DOM
+  const brainRef = useRef(null); // 3D Gruppe
+  const selectedRef = useRef(null); // Live-Ref für selected (für RAF-Loop)
   const [selected, setSelected] = useState(null);
 
   // hält selected im RAF-Loop aktuell
-  useEffect(() => { selectedRef.current = selected; }, [selected]);
+  useEffect(() => {
+    selectedRef.current = selected;
+  }, [selected]);
 
   useEffect(() => {
     const host = hostRef.current;
@@ -70,16 +74,18 @@ export default function NeuroTechnik() {
       antialias: true,
       alpha: true,
       premultipliedAlpha: false,
-      powerPreference: "high-performance"
+      powerPreference: "high-performance",
     });
     renderer.setClearColor(0x000000, 0); // durchsichtig
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, isMobile ? 1.5 : 2));
+    renderer.setPixelRatio(
+      Math.min(window.devicePixelRatio || 1, isMobile ? 1.5 : 2)
+    );
     renderer.setSize(width, height);
     // Canvas-Element-Größe zusätzlich hart setzen (gegen Mobile-Layout-Shifts)
     renderer.domElement.style.width = "100%";
     renderer.domElement.style.height = `${height}px`;
 
-    // Farbraum (kompatibel mit älterem three)
+    // Farbraum – kompatibel mit deiner three-Version
     renderer.outputEncoding = THREE.sRGBEncoding;
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
     renderer.toneMappingExposure = 1.0;
@@ -120,15 +126,28 @@ export default function NeuroTechnik() {
     scene.add(brain);
     brainRef.current = brain;
 
-    // GLB laden
+    // GLB laden (aus /public)
+    const BRAIN_URL = "/brain.glb";
     const loader = new GLTFLoader();
-    const url = `/assets/models/brain.glb`;    loader.load(
-      url,
+
+    // DRACO-Decoder (CDN) – keine Dateien kopieren nötig
+    const draco = new DRACOLoader();
+    draco.setDecoderConfig({ type: "wasm" }); // optional
+    draco.setDecoderPath("https://www.gstatic.com/draco/v1/decoders/");
+    loader.setDRACOLoader(draco);
+
+    // Meshopt-Dekoder (schadet nicht, falls dein GLB EXT_meshopt_compression nutzt)
+    loader.setMeshoptDecoder(MeshoptDecoder);
+
+    loader.load(
+      BRAIN_URL,
       (gltf) => {
         const root = gltf.scene;
 
         // Sicherheitsnetz: niemals weggeculled (Mobile-Frustum-Probleme)
-        root.traverse((o) => { o.frustumCulled = false; });
+        root.traverse((o) => {
+          o.frustumCulled = false;
+        });
 
         // Normalisieren & zentrieren
         const box = new THREE.Box3().setFromObject(root);
@@ -157,10 +176,10 @@ export default function NeuroTechnik() {
         });
 
         brain.add(root);
-        console.log("[GLB] geladen:", url);
+        console.log("[GLB] geladen:", BRAIN_URL);
       },
       undefined,
-      (err) => console.error("[GLB] Load error:", url, err)
+      (err) => console.error("[GLB] Load error:", BRAIN_URL, err)
     );
 
     // Welt -> Canvas-Koordinaten (CSS-Pixel)
@@ -195,7 +214,7 @@ export default function NeuroTechnik() {
         if (anchor) {
           const bx = parseFloat(anchor.style.left) || 0;
           const by = parseFloat(anchor.style.top) || 0;
-          const side = (bx - (hostRect.left + hostRect.width / 2)) > 0 ? "left" : "right";
+          const side = bx - (hostRect.left + hostRect.width / 2) > 0 ? "left" : "right";
           popoverRef.current.dataset.side = side;
           popoverRef.current.style.left = `${bx}px`;
           popoverRef.current.style.top = `${by}px`;
@@ -223,6 +242,9 @@ export default function NeuroTechnik() {
       window.removeEventListener("resize", onResize);
       controls.dispose();
       renderer.dispose();
+      try {
+        draco.dispose && draco.dispose();
+      } catch (_) {}
       host.removeChild(renderer.domElement);
     };
   }, []); // nur einmal initialisieren
@@ -261,7 +283,11 @@ export default function NeuroTechnik() {
                     <li key={i}>{b}</li>
                   ))}
                 </ul>
-                <button className="nt-close" onClick={() => setSelected(null)} aria-label="Schließen">
+                <button
+                  className="nt-close"
+                  onClick={() => setSelected(null)}
+                  aria-label="Schließen"
+                >
                   ×
                 </button>
               </div>
